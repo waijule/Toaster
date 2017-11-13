@@ -93,7 +93,7 @@ open class Toast: Operation {
 
   // MARK: Showing
 
-  public func show() {
+  @objc public func show() {
     ToastCenter.default.add(self)
   }
 
