@@ -16,6 +16,15 @@ open class Toast: Operation {
 
   public var delay: TimeInterval
   public var duration: TimeInterval
+  public var position: String? {
+    get { return self.view.position }
+    set { self.view.position = newValue }
+  }
+    
+  public var addedOffsetY: CGFloat? {
+    get { return self.view.addedOffsetY }
+    set { self.view.addedOffsetY = newValue }
+  }
 
   private var _executing = false
   override open var isExecuting: Bool {
@@ -49,13 +58,14 @@ open class Toast: Operation {
 
   // MARK: Initializing
 
-  public init(text: String?, delay: TimeInterval = 0, duration: TimeInterval = Delay.short) {
+  public init(text: String?, delay: TimeInterval = 0, duration: TimeInterval = Delay.short, position: String = "bottom", addedOffsetY: CGFloat = 0) {
     self.delay = delay
     self.duration = duration
     super.init()
+    self.addedOffsetY = addedOffsetY
+    self.position = position
     self.text = text
   }
-
 
   // MARK: Factory (Deprecated)
 
@@ -70,8 +80,14 @@ open class Toast: Operation {
   }
 
   @available(*, deprecated, message: "Use 'init(text:delay:duration:)' instead.")
-  public class func makeText(_ text: String?, delay: TimeInterval, duration: TimeInterval) -> Toast {
-    return Toast(text: text, delay: delay, duration: duration)
+  @objc public class func makeText(_ text: String?, delay: TimeInterval, duration: TimeInterval, position: String, addedOffsetY: CGFloat) -> Toast {
+    return Toast(text: text, delay: delay, duration: duration, position: position, addedOffsetY: addedOffsetY)
+  }
+
+  @objc public class func hide() {
+    if let currentToast = ToastCenter.default.currentToast {
+      currentToast.cancel()
+    }
   }
 
 

@@ -9,6 +9,10 @@ open class ToastView: UIView {
     set { self.textLabel.text = newValue }
   }
 
+  open var position: String?
+
+  open var addedOffsetY: CGFloat?
+
 
   // MARK: Appearance
 
@@ -133,24 +137,26 @@ open class ToastView: UIView {
     var height: CGFloat
 
     let orientation = UIApplication.shared.statusBarOrientation
-    if orientation.isPortrait || !ToastWindow.shared.shouldRotateManually {
-      width = containerSize.width
-      height = containerSize.height
-      y = self.bottomOffsetPortrait
-    } else {
-      width = containerSize.height
-      height = containerSize.width
-      y = self.bottomOffsetLandscape
-    }
-
     let backgroundViewSize = self.backgroundView.frame.size
+    width = containerSize.width
+    height = containerSize.height
+    if orientation.isPortrait || !ToastWindow.shared.shouldRotateManually {
+        y = self.bottomOffsetPortrait
+    } else {
+        y = self.bottomOffsetLandscape
+    }
+    switch self.position {
+        case "top"?: break;
+        case "center"?: y = (height - backgroundViewSize.height) / 2
+        case "bottom"?: y = height - (backgroundViewSize.height + y)
+        default: break;
+    }
     x = (width - backgroundViewSize.width) * 0.5
-    y = height - (backgroundViewSize.height + y)
     self.frame = CGRect(
-      x: x,
-      y: y,
-      width: backgroundViewSize.width,
-      height: backgroundViewSize.height
+        x: x,
+        y: y + self.addedOffsetY!,
+        width: backgroundViewSize.width,
+        height: backgroundViewSize.height
     )
   }
 
